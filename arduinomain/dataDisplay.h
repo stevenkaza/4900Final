@@ -20,6 +20,7 @@ class dataDisplay {
     void wifiLoop();
     void setupLED();
     void enableLED();
+    void listener(); 
     void flashLED(int);
     void disableLED();
     void wifiWriteLoop();

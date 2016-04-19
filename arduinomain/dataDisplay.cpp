@@ -47,6 +47,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
             break;
         case WStype_TEXT:
             USE_SERIAL.printf("[%u] Message: %s\n", num, payload);
+
+           
+            //
             USE_SERIAL.print("Sending Payload\n");
             USE_SERIAL.print("Recieving Payload\n");
 
