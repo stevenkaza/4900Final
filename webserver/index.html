@@ -15,6 +15,26 @@
         $(function() {
             $('#radio').buttonset();
         });
+
+
+    var connection = new WebSocket('ws://10.11.2.1:81/', ['arduino']);
+    connection.onopen = function () {
+        connection.send('Message from Browser to ESP8266 yay its Working!! ' + new Date()); 
+        connection.send('ping');
+        
+    /*  setInterval(function() {
+            connection.send('Time: ' + new Date()); 
+        }, 20);
+    */
+    connection.send('Time: ' + new Date()); 
+    };
+    connection.onerror = function (error) {
+        console.log('WebSocket Error ', error);
+    };
+    connection.onmessage = function (e) {
+        console.log('Server: ', e.data);
+        connection.send('Time: ' + new Date()); 
+    };
     </script>
     <!--************************************************************************************ STYLES*************************************************************************************-->
     <style>
@@ -65,12 +85,9 @@
     <div class='outer outer-1'>
         <div id='tabs' class='inner inner-1'>
             <ul>
-                <li><a href='#component1'>LED</a>
-                    <li>
-                        <li><a href='#component2'>Ultrasonic</a>
-                            <li>
-                                <li><a href='#component3'>Switch</a>
-                                    <li>
+                <li><a href='#component1'>LED</a></li>
+                <li><a href='#component2'>Ultrasonic</a></li>
+                <li><a href='#component3'>Switch</a></li>
             </ul>
             <div id='component1'>
                 <div>
