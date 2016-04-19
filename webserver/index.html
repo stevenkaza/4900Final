@@ -11,12 +11,25 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
+
+<!--************************************************************************************
+                                        JS MAIN
+*************************************************************************************-->
         <script>
-          $(function() {
-            $( "#tabs" ).tabs();
-          });
+            $(function() {
+                $( "#tabs" ).tabs();
+            });
+
+
+            $(function() {
+                $( "#radio" ).buttonset();
+            });
         </script>
 
+
+<!--************************************************************************************
+                                        STYLES
+*************************************************************************************-->
         <style>
 
             .outer {
@@ -28,11 +41,16 @@
                 margin: 0 auto;
                 padding: 0 20px;
                 border: 2px solid red;
-                height: 1000px;
+                height: 200px;
             }
 
         </style>
     </head>
+
+
+<!--************************************************************************************
+                                        LAYOUT
+*************************************************************************************-->
     <body>
         <div class = "headerContainer">
             <header>
@@ -40,16 +58,28 @@
             </header>
         </div>
         <div class = "outer outer-1">
-            <div id = "tabs" class = "inner outer-1">
+            <div id = "tabs" class = "inner inner-1">
                 <ul>
                     <li><a href = "#component1">LED</a><li>
                     <li><a href = "#component2">Ultrasonic</a><li>
                     <li><a href = "#component3">Switch</a><li>
                 </ul>
-                <div id = "component1">first one</div>
+                <div id = "component1">
+
+                    <div>
+                        <form>
+                            <div id = "radio">
+                                <input type="radio" id="radio1" name="radio"><label for="radio1">On</label>
+                                <input type="radio" id="radio2" name="radio"><label for="radio2" checked="checked">Off</label>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
                 <div id = "component2">second one</div>
                 <div id = "component3">third one</div>
             </div>
+
         </div>
     </body>
 </html>
