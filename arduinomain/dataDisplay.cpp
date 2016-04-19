@@ -58,6 +58,31 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
 }
 
 
+void dataDisplay::setupLED(){
+    pinMode(0,OUTPUT);
+}
+
+
+void dataDisplay::enableLED(){
+    USE_SERIAL.print("ENABLING");
+    digitalWrite(0,HIGH);
+}
+
+void dataDisplay::disableLED(){
+    USE_SERIAL.print("disabling ");
+   
+    digitalWrite(0,LOW);
+}
+
+void dataDisplay::flashLED(int duration){
+    while (true){
+        wifi.enableLED();
+        delay(duration); 
+        wifi.disableLED();
+        delay(duration);
+    }
+}
+
 void dataDisplay::begin() {
     //USE_SERIAL.begin(921600);
     USE_SERIAL.begin(115200);
@@ -115,6 +140,13 @@ void dataDisplay::begin() {
    // USE_SERIAL.println("shes a anilla make hannah jealous");
 
 }
+
+void dataDisplay::listener(){
+
+    // if msg received == ON, call enableLED
+    // if msg recieved == OFF, call disableLED
+
+}
 void dataDisplay::process(){
 //  ledHandler();
  // servoHandler();
@@ -125,6 +157,7 @@ void dataDisplay::process(){
   wifi.wifiLoop();
  
   wifi.wifiWriteLoop();
+  wifi.listener(); 
 }
 void dataDisplay::wifiLoop() {
     webSocket.loop();
