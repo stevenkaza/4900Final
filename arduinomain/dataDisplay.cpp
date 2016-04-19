@@ -21,8 +21,6 @@ WebSocketsServer webSocket = WebSocketsServer(8899);
 
 dataDisplay wifi;
 
-
-
 void dataDisplay::wifiWriteLoop() {
   char buff[180];
   webSocket.sendTXT(0,"FUUUUUCK");
@@ -54,7 +52,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
 
             break;
     }
-
 }
 
 
