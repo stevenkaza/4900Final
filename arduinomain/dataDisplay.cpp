@@ -1,5 +1,13 @@
-#include "Arduino.h"
+#include <Arduino.h>
+
+#include <ESP8266WiFi.h>
+#include <ESP8266WiFiMulti.h>
+#include <WebSocketsServer.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
+#include <Hash.h>
 #include "dataDisplay.h"
+#include <EEPROM.h>
 #define NETWORKNAME "tinkerbox"
 #define NETWORKPASS "faceface01"
 
@@ -11,9 +19,20 @@ WebSocketsServer webSocket = WebSocketsServer(8899);
 //extern Stream * _GlobalStream;  
 
 
+dataDisplay wifi;
 
 
 
+void dataDisplay::wifiWriteLoop() {
+  char buff[180];
+  webSocket.sendTXT(0,"FUUUUUCK");
+  /*sprintf (buff, "%d plus %d is %d", 5, 5, 5+5);
+  _s->print("Cunt!\n");
+  if (_s->available() > 0){
+    webSocket.sendTXT(0,_s->readString());
+    _s->flush();
+  }*/
+}
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
     switch(type) {
@@ -39,7 +58,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
 }
 
 
-
 void dataDisplay::begin() {
     //USE_SERIAL.begin(921600);
     USE_SERIAL.begin(115200);
@@ -57,28 +75,9 @@ void dataDisplay::begin() {
     }
 
     int n = WiFi.scanNetworks();
-    Serial.println("[SETUP] SCANNING...");
-    Serial.println("");
-    if (n == 0)
-      USE_SERIAL.println("no networks found");
-    else
-    {
-      USE_SERIAL.print(n);
-      USE_SERIAL.println(" networks found");
-      for (int i = 0; i < n; ++i)
-      {
-        // Print SSID and RSSI for each network found
-        USE_SERIAL.print(i + 1);
-        USE_SERIAL.print(": ");
-        USE_SERIAL.print(WiFi.SSID(i));
-        USE_SERIAL.print(" (");
-        USE_SERIAL.print(WiFi.RSSI(i));
-        USE_SERIAL.print(")");
-        USE_SERIAL.println((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
-        delay(10);
-      }
-    }
-    Serial.println("");
+    
+    
+    Serial.println("Adding TPBM");
 
     WiFiMulti.addAP(NETWORKNAME, NETWORKPASS);
 
@@ -87,6 +86,8 @@ void dataDisplay::begin() {
     }
 
     USE_SERIAL.print("IP address: ");
+
+    // this where our dashboard will be hosted, on this IP 
     USE_SERIAL.println(WiFi.localIP());
     USE_SERIAL.flush();
 
@@ -101,7 +102,8 @@ void dataDisplay::begin() {
     // handle index
     server.on("/", []() {
         // send index.html
-        server.send(200, "text/html", "<html><head><script>var connection = new WebSocket('ws://'+location.hostname+':8899/', ['arduino']);connection.onopen = function () {  connection.send('Connect ' + new Date()); }; connection.onerror = function (error) {    console.log('WebSocket Error ', error);};connection.onmessage = function (e) {  console.log('Server: ', e.data);};function sendRGB() {  var r = parseInt(document.getElementById('r').value).toString(16);  var g = parseInt(document.getElementById('g').value).toString(16);  var b = parseInt(document.getElementById('b').value).toString(16);  if(r.length < 2) { r = '0' + r; }   if(g.length < 2) { g = '0' + g; }   if(b.length < 2) { b = '0' + b; }   var rgb = '#'+r+g+b;    console.log('RGB: ' + rgb); connection.send(rgb); }</script></head><body>LED Control:<br/><br/>R: <input id=\"r\" type=\"range\" min=\"0\" max=\"255\" step=\"1\" onchange=\"sendRGB();\" /><br/>G: <input id=\"g\" type=\"range\" min=\"0\" max=\"255\" step=\"1\" onchange=\"sendRGB();\" /><br/>B: <input id=\"b\" type=\"range\" min=\"0\" max=\"255\" step=\"1\" onchange=\"sendRGB();\" /><br/></body></html>");
+        server.send(200, "text/html", "<html> <head> <title>ESP Dashboard</title> <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=yes'> <link rel='stylesheet/less' href='less/styles.less' type='text/css'> <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script> <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css'> <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'></script><!--************************************************************************************ JS MAIN*************************************************************************************--> <script>$(function(){$( '#tabs' ).tabs();}); $(function(){$( '#radio' ).buttonset();}); </script><!--************************************************************************************ STYLES*************************************************************************************--> <style>.outer{width: 100%; height: 1000px;}.inner{margin: 0 auto; padding: 0 20px; height: 200px;}.indicator{height: 100px; width: 100%; max-width: 100px;}.indicator span{display: block; padding-left: 7px;}.light{width: 50px; height: 50px; border-radius:50%; display:block;}.on{background-color: green;}.off{background-color: red;}</style> </head><!--************************************************************************************ LAYOUT*************************************************************************************--> <body> <div class='headerContainer'> <header> </header> </div><div class='outer outer-1'> <div id='tabs' class='inner inner-1'> <ul> <li><a href='#component1'>LED</a><li> <li><a href='#component2'>Ultrasonic</a><li> <li><a href='#component3'>Switch</a><li> </ul> <div id='component1'> <div> <form> <div id='radio'> <input type='radio' id='radio1' name='radio'><label for='radio1'>On</label> <input type='radio' id='radio2' name='radio'><label for='radio2' checked='checked'>Off</label> </div></form> </div></div><div id='component2'>Distance=</div><div id='component3'> <div class='indicator'> <div class='light off'></div><span>OFF</span> </div></div></div></div></body></html>");
+       // server.send(200,"text/stylesheet", "color:bold; ")
     });
 
     server.begin();
@@ -110,10 +112,20 @@ void dataDisplay::begin() {
     MDNS.addService("http", "tcp", 80);
     MDNS.addService("ws", "tcp", 8899);
 
-   // USE_SERIAL.println("shes a bogdan");
+   // USE_SERIAL.println("shes a anilla make hannah jealous");
 
 }
-
+void dataDisplay::process(){
+//  ledHandler();
+ // servoHandler();
+  //autoHandler();
+  //calibrateHandler();
+ //sensorNotifier();
+  //checkReady();
+  wifi.wifiLoop();
+ 
+  wifi.wifiWriteLoop();
+}
 void dataDisplay::wifiLoop() {
     webSocket.loop();
     server.handleClient();

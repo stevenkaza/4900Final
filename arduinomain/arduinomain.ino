@@ -1,4 +1,6 @@
 #include "dataDisplay.h"
+#include "Arduino.h"
+
 dataDisplay data;
 void setup() {
       data.begin();
@@ -8,7 +10,7 @@ void setup() {
 }
 
 void loop() {
-  
+    data.process();
   // put your main code here, to run repeatedly:
 
 }

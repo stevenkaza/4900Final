@@ -17,5 +17,6 @@ class dataDisplay {
     void begin();
     void wifiLoop();
     void wifiWriteLoop();
+    void process();
 };
 
