@@ -14,12 +14,9 @@
         $(function() {
             $('#radio').buttonset();
         });
-        var connection = new WebSocket('ws://10.11.2.1:81/', ['arduino']);
+        var connection = new WebSocket('ws://131.104.49.235:81/', ['arduino']);
         connection.onopen = function() {
-        	console.log("2 hours till brass taps trivia.... shit..");
-            connection.send('Message from Browser to ESP8266 yay its Working!! ' + new Date());
-            connection.send('ping'); /* setInterval(function(){connection.send('Time: ' + new Date());}, 20); */
-            connection.send('Time: ' + new Date());
+            console.log('opens connection');
         };
         connection.onerror = function(error) {
             console.log('WebSocket Error ', error);
@@ -28,6 +25,16 @@
             console.log('Server: ', e.data);
             connection.send('Time: ' + new Date());
         };
+        $(function() {
+            $('#radio1').click(function() {
+                console.log('button ON');
+                connection.send('ON');
+            });
+            $('#radio2').click(function() {
+                console.log('button OFF');
+                connection.send('OFF');
+            });
+        });
     </script>
     <style>
         .outer {

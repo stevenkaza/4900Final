@@ -18,22 +18,13 @@ ESP8266WiFiMulti WiFiMulti;
 ESP8266WebServer server = ESP8266WebServer(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
 
-
+char * buttonValue;
 dataDisplay wifi;
 
-void dataDisplay::wifiWriteLoop() {
-  char buff[180];
-  webSocket.sendTXT(0,"FUUUUUCK");
-  /*sprintf (buff, "%d plus %d is %d", 5, 5, 5+5);
-  _s->print("Cunt!\n");
-  if (_s->available() > 0){
-    webSocket.sendTXT(0,_s->readString());
-    _s->flush();
-  }*/
-}
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
     switch(type) {
+
         case WStype_DISCONNECTED:
             USE_SERIAL.printf("[%u] Disconnected!\n", num);
             break;
@@ -42,19 +33,23 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
             USE_SERIAL.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
 
             // send message to client
-            webSocket.sendTXT(num, "Connected");
+            webSocket.sendTXT(num, "Connected");    
         }
             break;
+
         case WStype_TEXT:
-            USE_SERIAL.printf("[%u] Message: %s\n", num, payload);
-            if (strcmp(payload,"ON")){
+            USE_SERIAL.printf("[%u] Serial Printing PAyload:: %s\n", num, payload);
+
+            sprintf(buttonValue,"%s",payload);
+          /*  if (strcmp(buttonValue,"ON")){
                 wifi.enableLED();
             }
-            else if (strcmp(payload,"OFF")){
+            else if (strcmp(buttonValue,"OFF")){
                 wifi.disableLED(); 
             }
             USE_SERIAL.print("Sending Payload\n");
             USE_SERIAL.print("Recieving Payload\n");
+            */
 
             break;
     }
@@ -110,7 +105,7 @@ void dataDisplay::begin() {
     WiFiMulti.addAP(NETWORKNAME, NETWORKPASS);
 
     while(WiFiMulti.run() != WL_CONNECTED) {
-        delay(100);
+        delay(1);
     }
 
     USE_SERIAL.print("IP address: ");
@@ -130,8 +125,7 @@ void dataDisplay::begin() {
     // handle index
     server.on("/", []() {
         // send index.html
-        server.send(200, "text/html", "<html><head> <title>ESP Dashboard</title> <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=yes'> <link rel='stylesheet/less' href='less/styles.less' type='text/css'> <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script> <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css'> <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'></script> <script>$(function(){$('#tabs').tabs();}); $(function(){$('#radio').buttonset();}); var connection=new WebSocket('ws://131.104.49.182:81/', ['arduino']); connection.onopen=function(){console.log('2 hours till brass taps trivia.... shit..'); connection.send('Message from Browser to ESP8266 yay its Working!! ' + new Date()); connection.send('ping'); /* setInterval(function(){connection.send('Time: ' + new Date());}, 20); */ connection.send('Time: ' + new Date());}; connection.onerror=function(error){console.log('WebSocket Error ', error);}; connection.onmessage=function(e){console.log('Server: ', e.data); connection.send('Time: ' + new Date());}; </script> <style>.outer{width: 100%; height: 1000px;}.inner{margin: 0 auto; padding: 0 20px; height: 200px;}.indicator{height: 100px; width: 100%; max-width: 100px;}.indicator span{display: block; padding-left: 7px;}.light{width: 50px; height: 50px; border-radius: 50%; display: block;}.on{background-color: green;}.off{background-color: red;}</style></head><body> <div class='headerContainer'> <header> </header> </div><div class='outer outer-1'> <div id='tabs' class='inner inner-1'> <ul> <li><a href='#component1'>LED</a></li><li><a href='#component2'>Ultrasonic</a></li><li><a href='#component3'>Switch</a></li></ul> <div id='component1'> <div> <form> <div id='radio'> <input type='radio' id='radio1' name='radio'> <label for='radio1'>On</label> <input type='radio' id='radio2' name='radio'> <label for='radio2' checked='checked'>Off</label> </div></form> </div></div><div id='component2'>Distance=</div><div id='component3'> <div class='indicator'> <div class='light off'></div><span>OFF</span> </div></div></div></div></body></html>");
-       // server.send(200,"text/stylesheet", "color:bold; ")
+        server.send(200, "text/html", "<html><head> <title>ESP Dashboard</title> <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=yes'> <link rel='stylesheet/less' href='less/styles.less' type='text/css'> <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script> <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css'> <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'></script> <script>$(function(){$('#tabs').tabs();}); $(function(){$('#radio').buttonset();}); var connection=new WebSocket('ws://131.104.49.235:81/', ['arduino']); connection.onopen=function(){console.log('opens connection');}; connection.onerror=function(error){console.log('WebSocket Error ', error);}; connection.onmessage=function(e){console.log('Server: ', e.data); connection.send('Time: ' + new Date());}; $(function(){$('#radio1').click(function(){console.log('button ON'); connection.send('ON');}); $('#radio2').click(function(){console.log('button OFF'); connection.send('OFF');});}); </script> <style>.outer{width: 100%; height: 1000px;}.inner{margin: 0 auto; padding: 0 20px; height: 200px;}.indicator{height: 100px; width: 100%; max-width: 100px;}.indicator span{display: block; padding-left: 7px;}.light{width: 50px; height: 50px; border-radius: 50%; display: block;}.on{background-color: green;}.off{background-color: red;}</style></head><body> <div class='headerContainer'> <header> </header> </div><div class='outer outer-1'> <div id='tabs' class='inner inner-1'> <ul> <li><a href='#component1'>LED</a></li><li><a href='#component2'>Ultrasonic</a></li><li><a href='#component3'>Switch</a></li></ul> <div id='component1'> <div> <form> <div id='radio'> <input type='radio' id='radio1' name='radio'> <label for='radio1'>On</label> <input type='radio' id='radio2' name='radio'> <label for='radio2' checked='checked'>Off</label> </div></form> </div></div><div id='component2'>Distance=</div><div id='component3'> <div class='indicator'> <div class='light off'></div><span>OFF</span> </div></div></div></div></body></html>");
     });
 
     server.begin();
@@ -159,8 +153,6 @@ void dataDisplay::process(){
   //checkReady();
   wifi.wifiLoop();
  
-  wifi.wifiWriteLoop();
-  wifi.listener(); 
 }
 void dataDisplay::wifiLoop() {
     webSocket.loop();
