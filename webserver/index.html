@@ -40,9 +40,37 @@
             .inner {
                 margin: 0 auto;
                 padding: 0 20px;
-                border: 2px solid red;
                 height: 200px;
             }
+
+            .indicator {
+                height: 100px;
+                width: 100%;
+                max-width: 100px;
+            }
+
+            .indicator span {
+                display: block;
+                padding-left: 7px;
+            }
+
+            .light {
+                width: 50px;
+                height: 50px;
+                border-radius:50%;
+                display:block;
+            }
+
+
+            .on {
+                background-color: green;
+            }
+
+            .off {
+                background-color: red;
+            }
+
+
 
         </style>
     </head>
@@ -76,8 +104,13 @@
                     </div>
 
                 </div>
-                <div id = "component2">second one</div>
-                <div id = "component3">third one</div>
+                <div id = "component2">Distance = </div>
+                <div id = "component3">
+                    <div class = "indicator">
+                        <div class = "light off"></div>
+                        <span>OFF</span>
+                    </div>
+                </div>
             </div>
 
         </div>
