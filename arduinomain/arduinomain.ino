@@ -6,7 +6,7 @@ void setup() {
       data.begin();
       data.setupLED();
    // data.enableLED();
-      data.flashLED(500);
+    //  data.flashLED(500);
 
   // put your setup code here, to run once:
 

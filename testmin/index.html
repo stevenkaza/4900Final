@@ -7,7 +7,6 @@
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
     <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css'>
     <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'></script>
-    <!--************************************************************************************ JS MAIN*************************************************************************************-->
     <script>
         $(function() {
             $('#tabs').tabs();
@@ -15,8 +14,21 @@
         $(function() {
             $('#radio').buttonset();
         });
+        var connection = new WebSocket('ws://10.11.2.1:81/', ['arduino']);
+        connection.onopen = function() {
+        	console.log("2 hours till brass taps trivia.... shit..");
+            connection.send('Message from Browser to ESP8266 yay its Working!! ' + new Date());
+            connection.send('ping'); /* setInterval(function(){connection.send('Time: ' + new Date());}, 20); */
+            connection.send('Time: ' + new Date());
+        };
+        connection.onerror = function(error) {
+            console.log('WebSocket Error ', error);
+        };
+        connection.onmessage = function(e) {
+            console.log('Server: ', e.data);
+            connection.send('Time: ' + new Date());
+        };
     </script>
-    <!--************************************************************************************ STYLES*************************************************************************************-->
     <style>
         .outer {
             width: 100%;
@@ -56,7 +68,6 @@
         }
     </style>
 </head>
-<!--************************************************************************************ LAYOUT*************************************************************************************-->
 
 <body>
     <div class='headerContainer'>
@@ -65,12 +76,9 @@
     <div class='outer outer-1'>
         <div id='tabs' class='inner inner-1'>
             <ul>
-                <li><a href='#component1'>LED</a>
-                    <li>
-                        <li><a href='#component2'>Ultrasonic</a>
-                            <li>
-                                <li><a href='#component3'>Switch</a>
-                                    <li>
+                <li><a href='#component1'>LED</a></li>
+                <li><a href='#component2'>Ultrasonic</a></li>
+                <li><a href='#component3'>Switch</a></li>
             </ul>
             <div id='component1'>
                 <div>
