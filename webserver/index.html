@@ -1,3 +1,4 @@
+ server.send(200, "text/html", "
 <html>
 
 <head>
@@ -7,7 +8,6 @@
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
     <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css'>
     <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'></script>
-    <!--************************************************************************************ JS MAIN*************************************************************************************-->
     <script>
         $(function() {
             $('#tabs').tabs();
@@ -15,28 +15,28 @@
         $(function() {
             $('#radio').buttonset();
         });
-
-
-    var connection = new WebSocket('ws://10.11.2.1:81/', ['arduino']);
-    connection.onopen = function () {
-        connection.send('Message from Browser to ESP8266 yay its Working!! ' + new Date()); 
-        connection.send('ping');
-        
-    /*  setInterval(function() {
-            connection.send('Time: ' + new Date()); 
-        }, 20);
-    */
-    connection.send('Time: ' + new Date()); 
-    };
-    connection.onerror = function (error) {
-        console.log('WebSocket Error ', error);
-    };
-    connection.onmessage = function (e) {
-        console.log('Server: ', e.data);
-        connection.send('Time: ' + new Date()); 
-    };
+        var connection = new WebSocket('ws://131.104.49.235:81/', ['arduino']);
+        connection.onopen = function() {
+            console.log('opens connection');
+        };
+        connection.onerror = function(error) {
+            console.log('WebSocket Error ', error);
+        };
+        connection.onmessage = function(e) {
+            console.log('Server: ', e.data);
+            connection.send('Time: ' + new Date());
+        };
+        $(function() {
+            $('#radio1').click(function() {
+                console.log('button ON');
+                connection.send('1');
+            });
+            $('#radio2').click(function() {
+                console.log('button OFF');
+                connection.send('0');
+            });
+        });
     </script>
-    <!--************************************************************************************ STYLES*************************************************************************************-->
     <style>
         .outer {
             width: 100%;
@@ -76,7 +76,6 @@
         }
     </style>
 </head>
-<!--************************************************************************************ LAYOUT*************************************************************************************-->
 
 <body>
     <div class='headerContainer'>
@@ -110,4 +109,4 @@
     </div>
 </body>
 
-</html>
+</html>");
