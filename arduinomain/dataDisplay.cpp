@@ -66,22 +66,26 @@ void dataDisplay::setupLED(){
 }
 
 void dataDisplay::flashLED(int duration){
-    while (1) {
+
         wifi.enableLED();
         delay(duration);
         wifi.disableLED();
-    }
+        wifi.enableLED();
+        delay(duration);
+        wifi.disableLED();  
+        delay(duration);
+        wifi.disableLED();    
 }
 
 void dataDisplay::enableLED(){
     USE_SERIAL.print("ENABLING");
-    digitalWrite(3,HIGH);
+    digitalWrite(0,HIGH);
 }
 
 void dataDisplay::disableLED(){
     USE_SERIAL.print("disabling ");
    
-    digitalWrite(3,LOW);
+    digitalWrite(0,LOW);
 }
 
 void dataDisplay::begin() {
@@ -128,7 +132,7 @@ void dataDisplay::begin() {
     // handle index
     server.on("/", []() {
         // send index.html
-        server.send(200, "text/html", "<html><head> <title>ESP Dashboard</title> <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=yes'> <link rel='stylesheet/less' href='less/styles.less' type='text/css'> <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script> <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css'> <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'></script> <script>$(function(){$('#tabs').tabs();}); $(function(){$('#radio').buttonset();}); var connection=new WebSocket('ws://192.168.0.20:81/', ['arduino']); connection.onopen=function(){console.log('opens connection');}; connection.onerror=function(error){console.log('WebSocket Error ', error);}; connection.onmessage=function(e){console.log('Server: ', e.data); connection.send('Time: ' + new Date());}; $(function(){$('#radio1').click(function(){console.log('button ON'); connection.send('1');}); $('#radio2').click(function(){console.log('button OFF'); connection.send('0');});}); </script> <style>.outer{width: 100%; height: 1000px;}.inner{margin: 0 auto; padding: 0 20px; height: 200px;}.indicator{height: 100px; width: 100%; max-width: 100px;}.indicator span{display: block; padding-left: 7px;}.light{width: 50px; height: 50px; border-radius: 50%; display: block;}.on{background-color: green;}.off{background-color: red;}</style></head><body> <div class='headerContainer'> <header> </header> </div><div class='outer outer-1'> <div id='tabs' class='inner inner-1'> <ul> <li><a href='#component1'>LED</a></li><li><a href='#component2'>Ultrasonic</a></li><li><a href='#component3'>Switch</a></li></ul> <div id='component1'> <div> <form> <div id='radio'> <input type='radio' id='radio1' name='radio'> <label for='radio1'>On</label> <input type='radio' id='radio2' name='radio'> <label for='radio2' checked='checked'>Off</label> </div></form> </div></div><div id='component2'>Distance=</div><div id='component3'> <div class='indicator'> <div class='light off'></div><span>OFF</span> </div></div></div></div></body></html>");
+        server.send(200, "text/html", "<html><head> <title>ESP Dashboard</title> <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=yes'> <link rel='stylesheet/less' href='less/styles.less' type='text/css'> <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script> <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css'> <script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'></script> <script>$(function(){$('#tabs').tabs();}); $(function(){$('#radio').buttonset();}); var connection=new WebSocket('ws://192.168.0.19:81/', ['arduino']); connection.onopen=function(){console.log('opens connection');}; connection.onerror=function(error){console.log('WebSocket Error ', error);}; connection.onmessage=function(e){console.log('Server: ', e.data); connection.send('Time: ' + new Date());}; $(function(){$('#radio1').click(function(){console.log('button ON'); connection.send('1');}); $('#radio2').click(function(){console.log('button OFF'); connection.send('0');});}); </script> <style>.outer{width: 100%; height: 1000px;}.inner{margin: 0 auto; padding: 0 20px; height: 200px;}.indicator{height: 100px; width: 100%; max-width: 100px;}.indicator span{display: block; padding-left: 7px;}.light{width: 50px; height: 50px; border-radius: 50%; display: block;}.on{background-color: green;}.off{background-color: red;}</style></head><body> <div class='headerContainer'> <header> </header> </div><div class='outer outer-1'> <div id='tabs' class='inner inner-1'> <ul> <li><a href='#component1'>LED</a></li><li><a href='#component2'>Ultrasonic</a></li><li><a href='#component3'>Switch</a></li></ul> <div id='component1'> <div> <form> <div id='radio'> <input type='radio' id='radio1' name='radio'> <label for='radio1'>On</label> <input type='radio' id='radio2' name='radio'> <label for='radio2' checked='checked'>Off</label> </div></form> </div></div><div id='component2'>Distance=</div><div id='component3'> <div class='indicator'> <div class='light off'></div><span>OFF</span> </div></div></div></div></body></html>");
        // server.send(200,"text/stylesheet", "color:bold; ")
     });
 
